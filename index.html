@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StS2 Workout Companion</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="total-block">
+      <span class="total-label">Total reps</span>
+      <span id="total" class="total-value">0</span>
+    </div>
+
+    <div class="timer-block">
+      <span class="timer-label">Combat</span>
+      <span id="timer" class="timer-value">00:00</span>
+      <div class="timer-controls">
+        <button id="timer-start" class="timer-btn timer-start" type="button">Start</button>
+        <button id="timer-stop" class="timer-btn timer-stop" type="button">Stop</button>
+        <button id="timer-reset" class="timer-btn timer-reset" type="button">Reset</button>
+      </div>
+    </div>
+
+    <button id="clear-all" class="clear-btn" type="button">Clear All</button>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2 class="panel-title">Events</h2>
+      <div id="buttons" class="buttons-grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">Tracker</h2>
+      <ul id="tracker" class="tracker-list"></ul>
+      <p id="tracker-empty" class="tracker-empty">No events yet. Click an event to start.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
