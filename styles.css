@@ -293,17 +293,19 @@ main {
   white-space: nowrap;
 }
 
-/* Global multiplier bar -- compact single row */
+/* Global multiplier bar -- full-width slim bar under the topbar */
 .global-mult-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.5rem 0.9rem;
+  padding: 0.3rem 1.5rem;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--border);
 }
 
 .global-mult-title {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--muted);
@@ -315,10 +317,16 @@ main {
   gap: 0.5rem;
 }
 
+.global-mult-step {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1rem;
+}
+
 .global-mult-readout {
   min-width: 3.5ch;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--accent-hover);

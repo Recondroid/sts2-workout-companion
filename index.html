@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StS2 Workout Companion</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <header class="topbar">
@@ -26,16 +26,16 @@
     <button id="clear-all" class="clear-btn" type="button">Clear All</button>
   </header>
 
-  <main>
-    <section class="panel global-mult-bar">
-      <span class="global-mult-title">Global Multiplier</span>
-      <div class="global-mult-control">
-        <button id="global-mult-minus" class="step-btn" type="button" aria-label="Decrease global multiplier">−</button>
-        <span id="global-mult-readout" class="global-mult-readout">×1</span>
-        <button id="global-mult-plus" class="step-btn" type="button" aria-label="Increase global multiplier">+</button>
-      </div>
-    </section>
+  <div class="global-mult-bar">
+    <span class="global-mult-title">Global Multiplier</span>
+    <div class="global-mult-control">
+      <button id="global-mult-minus" class="step-btn global-mult-step" type="button" aria-label="Decrease global multiplier">−</button>
+      <span id="global-mult-readout" class="global-mult-readout">×1</span>
+      <button id="global-mult-plus" class="step-btn global-mult-step" type="button" aria-label="Increase global multiplier">+</button>
+    </div>
+  </div>
 
+  <main>
     <section class="panel">
       <h2 class="panel-title">Events</h2>
       <div id="buttons" class="buttons-grid"></div>
