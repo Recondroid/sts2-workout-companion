@@ -2,6 +2,7 @@
   { "name": "Turn Count", "value": "range(1,25)" },
   { "name": "Buy or Gain Card", "value": 1 },
   { "name": "Get a Relic", "value": 2},
+  { "name": "Use a Potion", "value": 2},
   { "name": "Pick up a Curse Card", "value": 3 },
   { "name": "Take 15 Damage in 1 Hit", "value": 2 },
   { "name": "Make a Mistake (unnecessary damage or misplay)", "value": 2, "mult": { "step": 1 } },
