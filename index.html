@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StS2 Workout Companion</title>
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <header class="topbar">
@@ -23,7 +23,10 @@
       </div>
     </div>
 
-    <button id="clear-all" class="clear-btn" type="button">Clear All</button>
+    <div class="topbar-actions">
+      <button id="clear-all" class="clear-btn" type="button">Clear All</button>
+      <button id="clear-history" class="clear-btn clear-history-btn" type="button">Clear History</button>
+    </div>
   </header>
 
   <div class="global-mult-bar">
@@ -46,8 +49,15 @@
       <ul id="tracker" class="tracker-list"></ul>
       <p id="tracker-empty" class="tracker-empty">No events yet. Click an event to start.</p>
     </section>
+
+    <section class="panel history-panel">
+      <h2 class="panel-title">History</h2>
+      <ul id="history" class="history-list"></ul>
+      <p id="history-empty" class="history-empty">No history yet. Press Clear All to log a session.</p>
+    </section>
   </main>
 
-  <script src="app.js?v=3"></script>
+  <script src="history.js?v=1"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

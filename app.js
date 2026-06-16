@@ -16,6 +16,9 @@ let tracker = [];
 // Parsed config entries, kept so buttons can re-render when globalMult changes.
 let configEntries = [];
 
+// HistoryLog instance (created in init). Snapshots sessions on Clear All.
+let historyLog = null;
+
 const totalEl = document.getElementById("total");
 const buttonsEl = document.getElementById("buttons");
 const trackerEl = document.getElementById("tracker");
@@ -129,6 +132,13 @@ function removeEntry(id) {
 }
 
 function clearAll() {
+  // Snapshot the session into history before wiping (skip empty clears).
+  if (tracker.length > 0 && historyLog) {
+    historyLog.record({
+      total: Math.round(total()),
+      events: tracker.map((i) => `${i.name}: ${i.value}`),
+    });
+  }
   tracker = [];
   save();
   renderTracker();
@@ -505,7 +515,17 @@ async function init() {
   renderTracker();
   initTimer();
 
+  historyLog = new HistoryLog({
+    listEl: document.getElementById("history"),
+    emptyEl: document.getElementById("history-empty"),
+    storageKey: "sts2-workout-history",
+    max: 100,
+  });
+  historyLog.load();
+  historyLog.render();
+
   document.getElementById("clear-all").addEventListener("click", clearAll);
+  document.getElementById("clear-history").addEventListener("click", () => historyLog.clear());
 
   try {
     const res = await fetch("config.json", { cache: "no-store" });

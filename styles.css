@@ -124,6 +124,12 @@ body {
   }
 }
 
+.topbar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
 .clear-btn {
   background: transparent;
   color: var(--text);
@@ -394,6 +400,48 @@ main {
 }
 
 .tracker-empty {
+  color: var(--muted);
+  font-style: italic;
+  margin: 0.25rem 0 0;
+}
+
+/* History (full-width, below Events/Tracker) */
+.history-panel {
+  grid-column: 1 / -1;
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  cursor: help;
+}
+
+.history-time { color: var(--muted); }
+
+.history-total {
+  color: var(--accent-hover);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-empty {
   color: var(--muted);
   font-style: italic;
   margin: 0.25rem 0 0;
