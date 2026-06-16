@@ -43,18 +43,20 @@ Edit `config.json` — a list of events. Each entry has a `name` and a `value`:
 ### Multiplier (×N)
 
 Add `"mult": true` to **any** entry (fixed or slider) to give it a ×N stepper with
-−/+ buttons. The multiplier applies **last**: `reps = base × multiplier`, where the
-base is the fixed value or the slider value. The control shows the current ×N and
-the resulting total, and the tracker records e.g. `Get a Relic ×3: 6`.
+−/+ buttons. The multiplier applies **last**: `reps = base × multiplier`, where
+the base is the fixed value or the slider value. Individual entries may be
+fractional (e.g. `Get a Relic ×1.25: 2.5`); the grand **total** is rounded to a
+whole number.
 
 ```json
 { "name": "Get a Relic", "value": 2, "mult": true }
 ```
 
-By default the multiplier ranges ×1–×99 starting at ×1. To customise, use an object:
+By default the multiplier ranges ×1–×99 starting at ×1 and steps by **0.25** per
+click. To customise, use an object (`step` is clamped to the 0.25–1.0 range):
 
 ```json
-{ "name": "Get a Relic", "value": 2, "mult": { "min": 1, "max": 10, "start": 1 } }
+{ "name": "Get a Relic", "value": 2, "mult": { "min": 1, "max": 10, "start": 1, "step": 0.5 } }
 ```
 
 Save `config.json`, then refresh the browser to see your changes.

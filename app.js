@@ -12,22 +12,31 @@ const trackerEl = document.getElementById("tracker");
 const trackerEmptyEl = document.getElementById("tracker-empty");
 
 /**
- * Parse an entry's optional `mult` flag into { min, max, start } or null.
- * Accepts `true` (defaults) or an object { min?, max?, start? }.
+ * Parse an entry's optional `mult` flag into { min, max, start, step } or null.
+ * Accepts `true` (defaults) or an object { min?, max?, start?, step? }.
+ * `step` is the increment per −/+ click, clamped to the 0.25–1.0 range
+ * (default 0.25). Multiplier values may be fractional.
  */
 function parseMult(mult) {
   if (!mult) return null;
-  if (mult === true) return { min: 1, max: 99, start: 1 };
+  if (mult === true) return { min: 1, max: 99, start: 1, step: 0.25 };
   if (typeof mult === "object") {
-    let min = Number.isFinite(mult.min) ? Math.trunc(mult.min) : 1;
-    if (min < 1) min = 1;
-    let max = Number.isFinite(mult.max) ? Math.trunc(mult.max) : 99;
+    let step = Number.isFinite(mult.step) ? mult.step : 0.25;
+    step = Math.min(1, Math.max(0.25, step));
+    let min = Number.isFinite(mult.min) ? mult.min : 1;
+    if (min < 0) min = 0;
+    let max = Number.isFinite(mult.max) ? mult.max : 99;
     if (max < min) max = min;
-    let start = Number.isFinite(mult.start) ? Math.trunc(mult.start) : min;
+    let start = Number.isFinite(mult.start) ? mult.start : min;
     start = Math.min(max, Math.max(min, start));
-    return { min, max, start };
+    return { min, max, start, step };
   }
   return null;
+}
+
+/** Round a multiplier value to 3 decimals to avoid float drift. */
+function roundMult(v) {
+  return Math.round(v * 1000) / 1000;
 }
 
 /**
@@ -116,7 +125,7 @@ function clearAll() {
 }
 
 function renderTotal() {
-  totalEl.textContent = String(total());
+  totalEl.textContent = String(Math.round(total()));
 }
 
 function renderTracker() {
@@ -208,7 +217,7 @@ function renderControlGroup(entry) {
   let finalReadout = null;
 
   function updateFinal() {
-    if (finalReadout) finalReadout.textContent = `= ${getBase() * getMult()}`;
+    if (finalReadout) finalReadout.textContent = `= ${roundMult(getBase() * getMult())}`;
   }
 
   // --- Base value source ---
@@ -259,12 +268,12 @@ function renderControlGroup(entry) {
     renderMult();
 
     const mMinus = makeStep("−", `Decrease multiplier for ${entry.name}`, () => {
-      multVal = Math.max(entry.mult.min, multVal - 1);
+      multVal = Math.max(entry.mult.min, roundMult(multVal - entry.mult.step));
       renderMult();
       updateFinal();
     });
     const mPlus = makeStep("+", `Increase multiplier for ${entry.name}`, () => {
-      multVal = Math.min(entry.mult.max, multVal + 1);
+      multVal = Math.min(entry.mult.max, roundMult(multVal + entry.mult.step));
       renderMult();
       updateFinal();
     });
@@ -289,7 +298,7 @@ function renderControlGroup(entry) {
   add.addEventListener("click", () => {
     const base = getBase();
     const mult = getMult();
-    const finalVal = base * mult;
+    const finalVal = roundMult(base * mult);
     let label;
     if (entry.mult) {
       label = `${entry.name} ×${mult}: ${finalVal}`;
