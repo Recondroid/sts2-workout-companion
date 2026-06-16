@@ -250,6 +250,16 @@ main {
 
 .step-btn:active { transform: scale(0.95); }
 
+.step-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.step-btn:disabled:hover {
+  background: var(--panel);
+  border-color: var(--border);
+}
+
 .range-readout {
   min-width: 2.5ch;
   text-align: center;
@@ -281,6 +291,28 @@ main {
   font-variant-numeric: tabular-nums;
   color: var(--accent-hover);
   white-space: nowrap;
+}
+
+/* Global multiplier section */
+.global-mult-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.global-mult-readout {
+  min-width: 3.5ch;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-hover);
+}
+
+.global-mult-hint {
+  margin-left: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted, #888);
 }
 
 .range-add {

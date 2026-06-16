@@ -1,7 +1,14 @@
 "use strict";
 
 const STORAGE_KEY = "sts2-workout-tracker";
+const GLOBAL_MULT_KEY = "sts2-workout-global-mult";
 const RANGE_RE = /^range\(\s*(\d+)\s*,\s*(\d+)\s*\)$/;
+
+// Global multiplier: scales the grand total. Steps by 0.25.
+const GLOBAL_MULT_MIN = 0.25;
+const GLOBAL_MULT_MAX = 10;
+const GLOBAL_MULT_STEP = 0.25;
+let globalMult = 1;
 
 // tracker: array of { id, name, value } -- value is always a resolved number.
 let tracker = [];
@@ -79,8 +86,12 @@ function newId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function total() {
+function rawTotal() {
   return tracker.reduce((sum, item) => sum + item.value, 0);
+}
+
+function total() {
+  return rawTotal() * globalMult;
 }
 
 function save() {
@@ -434,10 +445,57 @@ function initTimer() {
   renderTimer();
 }
 
+/* ---------------- Global multiplier ---------------- */
+
+const globalMultReadout = document.getElementById("global-mult-readout");
+const globalMultMinusBtn = document.getElementById("global-mult-minus");
+const globalMultPlusBtn = document.getElementById("global-mult-plus");
+
+function saveGlobalMult() {
+  try {
+    localStorage.setItem(GLOBAL_MULT_KEY, String(globalMult));
+  } catch (e) {
+    /* storage unavailable -- still works in-memory */
+  }
+}
+
+function loadGlobalMult() {
+  try {
+    const raw = localStorage.getItem(GLOBAL_MULT_KEY);
+    const n = Number(raw);
+    if (Number.isFinite(n) && n >= GLOBAL_MULT_MIN && n <= GLOBAL_MULT_MAX) {
+      globalMult = roundMult(n);
+    }
+  } catch (e) {
+    globalMult = 1;
+  }
+}
+
+function renderGlobalMult() {
+  globalMultReadout.textContent = `×${globalMult}`;
+  globalMultMinusBtn.disabled = globalMult <= GLOBAL_MULT_MIN;
+  globalMultPlusBtn.disabled = globalMult >= GLOBAL_MULT_MAX;
+  renderTotal();
+}
+
+function setGlobalMult(n) {
+  globalMult = roundMult(Math.min(GLOBAL_MULT_MAX, Math.max(GLOBAL_MULT_MIN, n)));
+  saveGlobalMult();
+  renderGlobalMult();
+}
+
+function initGlobalMult() {
+  loadGlobalMult();
+  globalMultMinusBtn.addEventListener("click", () => setGlobalMult(globalMult - GLOBAL_MULT_STEP));
+  globalMultPlusBtn.addEventListener("click", () => setGlobalMult(globalMult + GLOBAL_MULT_STEP));
+  renderGlobalMult();
+}
+
 /* ---------------- Init ---------------- */
 
 async function init() {
   load();
+  initGlobalMult();
   renderTracker();
   initTimer();
 
