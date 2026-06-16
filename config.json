@@ -10,5 +10,5 @@
   { "name": "🥊 Fight over a Relic", "value": 2, "mult": { "step": 1.0 } },
   { "name": "⁉️ Unknown Resolves More Negative than Positive", "value": 2 },
   { "name": "💀 You Die", "value": 5 },
-  { "name": "☠️ Team Dies", "value": 10 }
+  { "name": "☠️ Team Dies", "value": 30 }
 ]
