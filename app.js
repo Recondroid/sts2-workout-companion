@@ -4,7 +4,7 @@ const STORAGE_KEY = "sts2-workout-tracker";
 const GLOBAL_MULT_KEY = "sts2-workout-global-mult";
 const RANGE_RE = /^range\(\s*(\d+)\s*,\s*(\d+)\s*\)$/;
 
-// Global multiplier: scales the grand total. Steps by 0.25.
+// Global multiplier: multiplies each event's value as it's added. Steps by 0.25.
 const GLOBAL_MULT_MIN = 0.25;
 const GLOBAL_MULT_MAX = 10;
 const GLOBAL_MULT_STEP = 0.25;
@@ -12,6 +12,9 @@ let globalMult = 1;
 
 // tracker: array of { id, name, value } -- value is always a resolved number.
 let tracker = [];
+
+// Parsed config entries, kept so buttons can re-render when globalMult changes.
+let configEntries = [];
 
 const totalEl = document.getElementById("total");
 const buttonsEl = document.getElementById("buttons");
@@ -86,12 +89,8 @@ function newId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function rawTotal() {
-  return tracker.reduce((sum, item) => sum + item.value, 0);
-}
-
 function total() {
-  return rawTotal() * globalMult;
+  return tracker.reduce((sum, item) => sum + item.value, 0);
 }
 
 function save() {
@@ -179,12 +178,13 @@ function renderFixedButton(entry) {
   name.className = "event-name";
   name.textContent = entry.name;
 
+  const effective = roundMult(entry.value * globalMult);
   const value = document.createElement("span");
   value.className = "event-cost";
-  value.textContent = `+${entry.value}`;
+  value.textContent = `+${effective}`;
 
   btn.append(name, value);
-  btn.addEventListener("click", () => addEntry(entry.name, entry.value));
+  btn.addEventListener("click", () => addEntry(entry.name, effective));
   return btn;
 }
 
@@ -209,8 +209,9 @@ function makeStep(label, ariaLabel, onClick) {
 
 /**
  * Renders a control-group entry: a slider (range entries) and/or a ×N multiplier
- * stepper (entries with `mult`). The multiplier always applies last:
- *   reps = base × multiplier, where base is the slider value or the fixed value.
+ * stepper (entries with `mult`). Multipliers apply last:
+ *   reps = base × per-event multiplier × global multiplier,
+ * where base is the slider value or the fixed value.
  */
 function renderControlGroup(entry) {
   const wrap = document.createElement("div");
@@ -228,7 +229,9 @@ function renderControlGroup(entry) {
   let finalReadout = null;
 
   function updateFinal() {
-    if (finalReadout) finalReadout.textContent = `= ${roundMult(getBase() * getMult())}`;
+    if (finalReadout) {
+      finalReadout.textContent = `= ${roundMult(getBase() * getMult() * globalMult)}`;
+    }
   }
 
   // --- Base value source ---
@@ -294,12 +297,13 @@ function renderControlGroup(entry) {
     multGroup.append(mMinus, multReadout, mPlus);
     row.append(multGroup);
     getMult = () => multVal;
-
-    finalReadout = document.createElement("span");
-    finalReadout.className = "final-readout";
-    row.append(finalReadout);
-    updateFinal();
   }
+
+  // --- Effective value (includes the global multiplier) ---
+  finalReadout = document.createElement("span");
+  finalReadout.className = "final-readout";
+  row.append(finalReadout);
+  updateFinal();
 
   // --- Add ---
   const add = document.createElement("button");
@@ -309,7 +313,7 @@ function renderControlGroup(entry) {
   add.addEventListener("click", () => {
     const base = getBase();
     const mult = getMult();
-    const finalVal = roundMult(base * mult);
+    const finalVal = roundMult(base * mult * globalMult);
     let label;
     if (entry.mult) {
       label = `${entry.name} ×${mult}: ${finalVal}`;
@@ -482,6 +486,8 @@ function setGlobalMult(n) {
   globalMult = roundMult(Math.min(GLOBAL_MULT_MAX, Math.max(GLOBAL_MULT_MIN, n)));
   saveGlobalMult();
   renderGlobalMult();
+  // Re-render event buttons so their costs/previews reflect the new multiplier.
+  if (configEntries.length) renderButtons(configEntries);
 }
 
 function initGlobalMult() {
@@ -506,6 +512,7 @@ async function init() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const entries = await res.json();
     if (!Array.isArray(entries)) throw new Error("config.json must be a JSON array");
+    configEntries = entries;
     renderButtons(entries);
   } catch (e) {
     const msg = document.createElement("p");
