@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StS2 Workout Companion</title>
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
   <header class="topbar">
@@ -25,7 +25,7 @@
 
     <div class="topbar-actions">
       <button id="clear-all" class="clear-btn" type="button">Clear Reps</button>
-      <button id="clear-history" class="clear-btn clear-history-btn" type="button">Clear History</button>
+      <button id="open-leaderboard" class="clear-btn" type="button">Leaderboards</button>
     </div>
   </header>
 
@@ -51,16 +51,28 @@
     </section>
 
     <section class="panel history-panel">
-<div class="history-header">
-      <h2 class="panel-title">History</h2>
-<button id="clear-history" class="clear-btn clear-history-btn" type="button">Clear History</button>
+      <div class="history-header">
+        <h2 class="panel-title">History</h2>
+        <button id="clear-history" class="clear-btn clear-history-btn" type="button">Clear History</button>
       </div>
       <ul id="history" class="history-list"></ul>
       <p id="history-empty" class="history-empty">No history yet. Press Clear Reps to log a session.</p>
     </section>
   </main>
 
+  <div id="leaderboard-overlay" class="lb-overlay" hidden>
+    <div class="lb-modal">
+      <button id="leaderboard-close" class="lb-close" type="button" aria-label="Close">✕</button>
+      <h2 class="panel-title">Leaderboards</h2>
+      <div id="leaderboard-config" class="lb-config"></div>
+      <p id="leaderboard-status" class="lb-status"></p>
+      <div id="leaderboard-boards" class="lb-boards"></div>
+      <button id="leaderboard-refresh" class="clear-btn" type="button">Refresh</button>
+    </div>
+  </div>
+
   <script src="history.js?v=1"></script>
-  <script src="app.js?v=4"></script>
+  <script src="leaderboard.js?v=1"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

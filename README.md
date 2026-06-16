@@ -61,8 +61,46 @@ click. To customise, use an object (`step` is clamped to the 0.25–1.0 range):
 
 Save `config.json`, then refresh the browser to see your changes.
 
+## History
+
+Pressing **Clear Reps** logs the finished session (timestamp + total + the list of
+events) to the **History** panel. History keeps the last 100 sessions; hover an entry
+to see its event breakdown. **Clear History** wipes the log.
+
+## Leaderboard (optional)
+
+Compare workouts with friends on a shared leaderboard. It uses a **Google Sheet** as
+free storage — there is no server to run or pay for, and your friends never log in.
+Three boards are shown: **Best Session (all-time)**, **Best This Week**, and **Best
+Today**. The all-time best is remembered forever (even after it ages out of your last
+100 sessions or you Clear History); the week/today boards reset automatically.
+
+### Host setup (one time, ~5 minutes)
+
+One person sets up the shared sheet:
+
+1. Create a new **Google Sheet** (this is the storage).
+2. In the sheet: **Extensions → Apps Script**.
+3. Delete any starter code, then paste in the entire contents of
+   [`leaderboard-apps-script.gs`](leaderboard-apps-script.gs) and **Save**.
+4. **Deploy → New deployment → Web app**, and set:
+   - **Execute as:** Me
+   - **Who has access:** Anyone
+5. Click **Deploy** and approve the one-time permission prompt (host only — it lets the
+   script edit *your* sheet).
+6. Copy the **Web app URL** (it ends in `/exec`) and share it with your friends. Treat
+   it like a password — anyone with it can post to the board.
+
+### Joining (each player)
+
+Open the app → **Leaderboards** → paste the web-app URL and a display name → **Save**.
+Your stats publish automatically each time you press **Clear Reps**; press **Refresh**
+in the panel to pull everyone's latest.
+
 ## Notes
 
-- Your total and tracker are saved in the browser (`localStorage`), so refreshing or
-  reopening the page mid-run keeps your progress. **Clear All** wipes it.
-- Everything runs locally; nothing is sent anywhere.
+- Your total, tracker, and history are saved in the browser (`localStorage`), so
+  refreshing or reopening the page mid-run keeps your progress. **Clear Reps** logs the
+  session to History and wipes the tracker.
+- The app runs locally and sends nothing anywhere **unless** you set up the optional
+  leaderboard, which posts your name and session totals to the shared Google Sheet.

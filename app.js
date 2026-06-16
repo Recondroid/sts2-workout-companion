@@ -19,6 +19,9 @@ let configEntries = [];
 // HistoryLog instance (created in init). Snapshots sessions on Clear All.
 let historyLog = null;
 
+// Leaderboard instance (created in init). Shares stats via a Google Sheet.
+let leaderboard = null;
+
 const totalEl = document.getElementById("total");
 const buttonsEl = document.getElementById("buttons");
 const trackerEl = document.getElementById("tracker");
@@ -134,10 +137,16 @@ function removeEntry(id) {
 function clearAll() {
   // Snapshot the session into history before wiping (skip empty clears).
   if (tracker.length > 0 && historyLog) {
+    const sessionTotal = Math.round(total());
     historyLog.record({
-      total: Math.round(total()),
+      total: sessionTotal,
       events: tracker.map((i) => `${i.name}: ${i.value}`),
     });
+    if (leaderboard) {
+      // Capture the all-time best (even without a configured URL), then publish.
+      leaderboard.recordSession({ ts: Date.now(), total: sessionTotal });
+      if (leaderboard.isConfigured()) leaderboard.publish();
+    }
   }
   tracker = [];
   save();
@@ -507,6 +516,39 @@ function initGlobalMult() {
   renderGlobalMult();
 }
 
+/* ---------------- Leaderboard ---------------- */
+
+function initLeaderboard() {
+  const overlay = document.getElementById("leaderboard-overlay");
+
+  leaderboard = new Leaderboard({
+    storageKey: "sts2-leaderboard",
+    getSessions: () => historyLog.entries.map((e) => ({ ts: e.ts, total: e.total })),
+    configEl: document.getElementById("leaderboard-config"),
+    statusEl: document.getElementById("leaderboard-status"),
+    boardsEl: document.getElementById("leaderboard-boards"),
+  });
+  leaderboard.load();
+
+  const open = () => {
+    overlay.hidden = false;
+    leaderboard.renderConfig();
+    leaderboard.refresh();
+  };
+  const close = () => {
+    overlay.hidden = true;
+  };
+
+  document.getElementById("open-leaderboard").addEventListener("click", open);
+  document.getElementById("leaderboard-close").addEventListener("click", close);
+  document.getElementById("leaderboard-refresh").addEventListener("click", () => leaderboard.refresh());
+
+  // Click the dimmed backdrop (but not the modal) to close.
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+}
+
 /* ---------------- Init ---------------- */
 
 async function init() {
@@ -526,6 +568,8 @@ async function init() {
 
   document.getElementById("clear-all").addEventListener("click", clearAll);
   document.getElementById("clear-history").addEventListener("click", () => historyLog.clear());
+
+  initLeaderboard();
 
   try {
     const res = await fetch("config.json", { cache: "no-store" });
