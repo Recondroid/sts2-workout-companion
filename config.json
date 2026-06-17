@@ -9,6 +9,7 @@
   { "name": "💤 Rest instead of Upgrading", "value": 2 },
   { "name": "🥊 Fight over a Relic", "value": 2, "mult": { "step": 1.0 } },
   { "name": "⁉️ Unknown Resolves More Negative than Positive", "value": 2 },
+    { "name": "🔚 Last to End Turn", "value": 1 },
   { "name": "💀 You Die", "value": 5 },
   { "name": "☠️ Team Dies", "value": 30 }
 ]
